@@ -1,25 +1,31 @@
-<widget xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0" id="com.Schwingenschlag.batty" version="1.0.0">
+<?xml version='1.0' encoding='utf-8'?>
+<widget id="com.ihreapp.projekt" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>Schwingenschlag-Punkte</name>
-    <description>Sample Apache Cordova App</description>
-    <author email="dev@cordova.apache.org" href="https://cordova.apache.org"> Apache Cordova Team </author>
-    <content src="index.html"/>
-    <allow-intent href="http://*/*"/>
-    <allow-intent href="https://*/*"/>
-    <icon src="icon.png"/>
-    <preference name="AndroidInsecureFileModeEnabled" value="true"/>
+    <description>
+        Eine Beispiel-App für Schwingenschlag-Punkte.
+    </description>
+    <author email="dev@cordova.apache.org" href="https://cordova.apache.org">
+        Apache Cordova Team
+    </author>
+    <content src="index.html" />
+    <allow-intent href="http://*/*" />
+    <allow-intent href="https://*/*" />
     
+    <!-- Hier werden die Plattform-Einstellungen definiert -->
     <platform name="ios">
-        <!-- Festlegung der minimalen iOS-Version, die der Build unterstützt. -->
-        <!-- "15.0" ist eine moderne, weit verbreitete Version, die von der GitHub Actions Build-Umgebung unterstützt wird. -->
-        <preference name="DeploymentTarget" value="15.0" />
-        
-        <!-- Erforderliche Intents für iOS, um Links zum App Store zu öffnen. -->
-        <allow-intent href="itms:*" />
-        <allow-intent href="itms-apps:*" />
+        <!-- Das cordova-res Plugin wird diese Bilder verwenden, um alle Icon-Größen zu generieren -->
+        <icon src="resources/icon.png" />
+        <splash src="resources/splash.png" />
 
-        <!-- Icon-Quellbild für iOS -->
-       <icon src="resources/icon.png" />
+        <!-- Sie können auch spezifische Icons definieren, wenn Sie möchten, aber cordova-res ist einfacher -->
+        <!-- <icon src="res/icon/ios/icon-60@3x.png" width="180" height="180" /> -->
+        <!-- <splash src="res/screen/ios/Default@2x~universal~anyany.png" /> -->
+    </platform>
     
-        <!-- Splash-Screen-Quellbild für iOS -->
-       <splash src="resources/splash.png" />
+    <platform name="android">
+        <!-- Hier können Sie Android-spezifische Einstellungen definieren -->
+    </platform>
+
+    <preference name="Orientation" value="portrait" />
+    <!-- Weitere Präferenzen hier... -->
 </widget>
