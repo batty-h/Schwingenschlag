@@ -34,9 +34,16 @@ jobs:
       # Installiert die Abhängigkeiten deines Projekts
       run: npm install
 
+    - name: Clean iOS Platform
+      # DIESER NEUE SCHRITT LÖSCHT DEN VORHANDENEN IOS-PLATFORM-ORDNER
+      # Dies behebt oft Probleme mit korrupten oder veralteten Build-Dateien
+      run: |
+        if [ -d "platforms/ios" ]; then
+          cordova platform remove ios
+        fi
+      
     - name: Add Cordova iOS Platform
-      # DIES IST DER NEUE, WICHTIGE SCHRITT.
-      # Dieser Befehl fügt die iOS-Plattform zu dem Projekt auf dem virtuellen Mac-Computer hinzu.
+      # FÜGT DIE IOS-PLATTFORM WIEDER HINZU
       run: cordova platform add ios --no-fetch
       
     - name: Cordova iOS Build
