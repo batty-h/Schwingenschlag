@@ -35,17 +35,18 @@ jobs:
 
     - name: Install Dependencies
       # Installiert die Abhängigkeiten deines Projekts
-      # Dieser Schritt ist oft nicht nötig, da Cordova das selbst übernimmt,
-      # aber es schadet nicht, ihn zu haben, falls du weitere Abhängigkeiten hast.
       run: npm install
 
     - name: Cordova iOS Build
-      # Führt den Cordova-Build-Befehl für die iOS-Plattform aus
-      # Dies wird eine .xcworkspace oder .xcodeproj Datei im platforms/ios Ordner erzeugen.
-      run: cordova build ios --release
+      # Führt den Cordova-Build-Befehl für die iOS-Plattform aus.
+      # Der Build-Pfad hängt davon ab, ob für den Simulator oder das Gerät gebaut wird.
+      # Hier wird ein Simulator-Build durchgeführt, der keine Codesignierung benötigt.
+      run: cordova build ios --emulator --release
       
-    # Anmerkung: Um eine signierte .ipa-Datei für TestFlight oder den App Store zu erstellen,
-    # sind weitere Schritte erforderlich, um Apple Developer-Zertifikate und
-    # Provisioning-Profile zu importieren. Dies erfordert die sichere Speicherung
-    # dieser Dateien als GitHub Secrets.
-    # Für einen einfachen Test-Build ist dies nicht notwendig.
+    - name: Upload iOS App as Artifact
+      # Dieser Schritt lädt die App-Datei als Artefakt hoch.
+      # Der Pfad zeigt auf das Verzeichnis, in dem der Build die .app-Datei ablegt.
+      uses: actions/upload-artifact@v4
+      with:
+        name: ios-app-build
+        path: platforms/ios/build/emulator
