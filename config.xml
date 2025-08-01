@@ -1,13 +1,20 @@
-<?xml version='1.0' encoding='utf-8'?>
-<widget id="com.Schwingenschlag.batty" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0" id="com.Schwingenschlag.batty" version="1.0.0">
     <name>Schwingenschlag-Punkte</name>
     <description>Sample Apache Cordova App</description>
-    <author email="dev@cordova.apache.org" href="https://cordova.apache.org">
-        Apache Cordova Team
-    </author>
-    <content src="index.html" />
-    <allow-intent href="http://*/*" />
-    <allow-intent href="https://*/*" />
-	<icon src="icon.png" />
-    <preference name="AndroidInsecureFileModeEnabled" value="true" />
+    <author email="dev@cordova.apache.org" href="https://cordova.apache.org"> Apache Cordova Team </author>
+    <content src="index.html"/>
+    <allow-intent href="http://*/*"/>
+    <allow-intent href="https://*/*"/>
+    <icon src="icon.png"/>
+    <preference name="AndroidInsecureFileModeEnabled" value="true"/>
+    
+    <platform name="ios">
+        <!-- Festlegung der minimalen iOS-Version, die der Build unterstützt. -->
+        <!-- "13.0" ist eine moderne, weit verbreitete Version, die von der GitHub Actions Build-Umgebung unterstützt wird. -->
+        <preference name="DeploymentTarget" value="13.0" />
+        
+        <!-- Erforderliche Intents für iOS, um Links zum App Store zu öffnen. -->
+        <allow-intent href="itms:*" />
+        <allow-intent href="itms-apps:*" />
+    </platform>
 </widget>
