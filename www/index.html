@@ -1,0 +1,650 @@
+﻿<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schwingenschlag Punkte-Rechner</title>
+    <!-- Link zum Web App Manifest für PWA-Funktionalität -->
+    <link rel="manifest" href="manifest.json">
+    <style>
+        /*
+        Tailwind CSS wurde direkt in diese Datei eingebettet, um die Offline-Funktionalität zu gewährleisten.
+        Für eine vollständige Tailwind-Entwicklungsumgebung wird empfohlen, Tailwind CSS lokal zu installieren
+        und zu kompilieren (z.B. mit npm), anstatt die CDN-Version direkt einzubetten.
+        */
+
+        /* Base styles and custom styles */
+        html {
+            height: 100%; /* Stellt sicher, dass HTML 100% der Viewport-Höhe einnimmt */
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8; /* Hellblau-grauer Hintergrund */
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Oben ausrichten, um Springen beim Laden des Inhalts zu verhindern */
+            min-height: 100vh; /* Stellt sicher, dass der Body mindestens die volle Viewport-Höhe einnimmt */
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 1200px; /* Erhöhte maximale Breite für bessere Tabellenanzeige */
+            box-sizing: border-box;
+        }
+        input[type=text], input[type=number] {
+            border: 1px solid #cbd5e0; /* Hellgrauer Rahmen */
+            border-radius: 8px;
+            padding: 10px 12px;
+            width: 100%;
+            box-sizing: border-box;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        input[type=text]:focus, input[type=number]:focus {
+            outline: none;
+            border-color: #6366f1; /* Indigo-500 */
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2); /* Indigo-500 mit Transparenz */
+        }
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .btn-primary {
+            background-color: #6366f1; /* Indigo-500 */
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #4f46e5; /* Indigo-600 */
+            transform: translateY(-1px);
+        }
+        .btn-secondary {
+            background-color: #e2e8f0; /* Grau-200 */
+            color: #2d3748; /* Grau-800 */
+        }
+        .btn-secondary:hover {
+            background-color: #cbd5e0; /* Grau-300 */
+            transform: translateY(-1px);
+        }
+        .btn-danger {
+            background-color: #ef4444; /* Rot-500 */
+            color: white;
+        }
+        .btn-danger:hover {
+            background-color: #dc2626; /* Rot-600 */
+            transform: translateY(-1px);
+        }
+        table {
+            width: 100%; /* Ensures table takes full width of container */
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 20px;
+            border-radius: 10px;
+            overflow: hidden; /* Ensures rounded corners apply to table content */
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0; /* Grau-200 */
+            white-space: nowrap; /* Prevents line breaks in table cells unless explicitly broken */
+        }
+        th {
+            background-color: #4f46e5; /* Indigo-600 */
+            color: white;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+        }
+        tr:last-child td {
+            border-bottom: none;
+        }
+        tr:nth-child(even) {
+            background-color: #f8fafc; /* Grau-50 */
+        }
+        tr:hover:not(.total-row) {
+            background-color: #eff6ff; /* Blue-50 */
+        }
+        .total-row {
+            background-color: #312e81; /* Indigo-900 */
+            color: white;
+            font-weight: 700;
+        }
+        .total-row td {
+            border-top: 2px solid #6366f1; /* Indigo-500 */
+        }
+        .player-name-input-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .player-name-input-group input {
+            flex-grow: 1;
+        }
+        .category-image {
+            height: 25px; /* Adjust image height as needed */
+            width: auto;
+            vertical-align: middle;
+            margin-right: 4px; /* Reduced space between elements */
+            display: inline-block; /* Ensures it sits nicely with text */
+        }
+        .category-list-item {
+            display: flex;
+            align-items: flex-start;
+            margin-top: 4px;
+            font-size: 0.9em;
+            margin-left: 15px;
+            white-space: normal; /* Allow text to wrap within list item */
+        }
+        .category-list-item .bullet-icon {
+            margin-right: 8px;
+            font-size: 1.2em;
+            line-height: 1;
+            flex-shrink: 0;
+        }
+        .category-list-item .list-item-content {
+            flex-grow: 1;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            white-space: normal; /* Ensure content wraps */
+        }
+        .small-image {
+            height: 18px;
+            width: auto;
+            vertical-align: middle;
+            margin-right: 4px;
+            flex-shrink: 0;
+        }
+        /* New class for the text that should wrap and align at the start of the line */
+        .list-item-wrapped-line {
+            display: block; /* Forces this element to be on its own line */
+            width: 100%; /* Ensures it takes full width to force wrap */
+            box-sizing: border-box;
+            white-space: normal;
+        }
+
+        /* --- Tailwind-like Utility Classes (for offline use) --- */
+        .text-3xl { font-size: 1.875rem; line-height: 2.25rem; } /* 30px */
+        .text-xl { font-size: 1.25rem; line-height: 1.75rem; } /* 20px */
+        .text-2xl { font-size: 1.5rem; line-height: 2rem; } /* 24px */
+        .font-bold { font-weight: 700; }
+        .font-semibold { font-weight: 600; }
+        .text-center { text-align: center; }
+        .text-gray-800 { color: #2d3748; }
+        .text-gray-700 { color: #4a5568; }
+        .text-gray-600 { color: #718096; }
+        .text-gray-900 { color: #1a202c; }
+        .text-indigo-600 { color: #4f46e5; }
+
+        .mb-8 { margin-bottom: 2rem; } /* 32px */
+        .mb-4 { margin-bottom: 1rem; } /* 16px */
+        .mt-6 { margin-top: 1.5rem; } /* 24px */
+        .ml-4 { margin-left: 1rem; } /* 16px */
+        .gap-4 { gap: 1rem; } /* 16px */
+
+        .p-6 { padding: 1.5rem; } /* 24px */
+        /* .rounded-lg is already defined in custom styles */
+
+        /* Shadows - basic approximations */
+        .shadow-inner { box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06); }
+        .shadow-md { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
+        .shadow-lg { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
+
+        /* Backgrounds */
+        .bg-gray-50 { background-color: #f9fafb; }
+        .bg-black { background-color: #000; }
+        .bg-opacity-50 { background-color: rgba(0, 0, 0, 0.5); }
+        .bg-white { background-color: #fff; }
+
+        /* Flex utilities */
+        .flex { display: flex; }
+        .items-center { align-items: center; }
+        .justify-center { justify-content: center; }
+        .justify-end { justify-content: flex-end; }
+        /* .gap-4 is already defined above */
+        .flex-grow { flex-grow: 1; }
+        /* .flex-wrap is already defined in .list-item-content */
+
+        /* Positioning for overlay */
+        .fixed { position: fixed; }
+        .inset-0 { top: 0; right: 0; bottom: 0; left: 0; }
+        .z-50 { z-index: 50; }
+        .hidden { display: none; } /* Already in custom styles */
+
+        /* Widths */
+        .w-full { width: 100%; }
+        .max-w-sm { max-width: 24rem; /* 384px */ }
+        .w-11\/12 { width: 91.666667%; } /* 11/12 */
+
+        /* Text utilities */
+        .break-words { word-break: break-words; }
+        .hover\:underline:hover { text-decoration: underline; }
+
+        /* Responsive flex (manual implementation) */
+        .flex-col-mobile { flex-direction: column; }
+        @media (min-width: 640px) { /* Tailwind's sm breakpoint */
+            .sm\:flex-row { flex-direction: row; }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            th, td {
+                padding: 10px 8px;
+                font-size: 0.9rem;
+            }
+            .btn {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+            .flex-col-mobile {
+                flex-direction: column;
+            }
+            .category-image, .small-image {
+                height: 20px;
+            }
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <div class="container">
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-8">Schwingenschlag Punkte-Rechner</h1>
+
+        <!-- Spieler-Eingabebereich -->
+        <div id="player-input-section" class="mb-8 p-6 bg-gray-50 rounded-lg shadow-inner">
+            <h2 class="text-xl font-semibold text-gray-700 mb-4">Spieler hinzufügen (max. 5)</h2>
+            <div id="player-names-container">
+                <!-- Eingabefelder für Spielernamen werden hier von JS hinzugefügt -->
+            </div>
+            <div class="flex flex-col-mobile sm:flex-row gap-4 mt-6">
+                <button id="add-player-btn" class="btn btn-secondary flex-grow">Spieler hinzufügen</button>
+                <button id="start-scoring-btn" class="btn btn-primary flex-grow">Punkte eingeben</button>
+            </div>
+        </div>
+
+        <!-- Punkttabellenbereich -->
+        <div id="score-table-section" class="hidden">
+            <h2 class="text-xl font-semibold text-gray-700 mb-4">Spielstand-Tabelle</h2>
+            <div class="overflow-x-auto rounded-lg shadow-md">
+                <table id="score-table" class="min-w-full">
+                    <thead>
+                        <tr id="table-header-row">
+                            <th class="rounded-tl-lg">Kategorie</th>
+                            <!-- Spielername-Header werden hier von JS hinzugefügt -->
+                        </tr>
+                    </thead>
+                    <tbody id="table-body">
+                        <!-- Punktzeilen werden hier von JS hinzugefügt -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="flex justify-end items-center mt-6">
+                <button id="reset-btn" class="btn btn-danger">Zurücksetzen</button>
+                <!-- Copyright-Symbol wurde hierher verschoben -->
+                <div id="copyright-trigger" class="ml-4 cursor-pointer text-gray-600 text-2xl hover:text-gray-900 transition-colors duration-200">
+                    &copy;
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="email-overlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white p-8 rounded-lg shadow-lg text-center relative max-w-sm w-11/12">
+            <h3 class="text-xl font-semibold mb-4 text-gray-800">Kontakt</h3>
+            <p class="text-gray-700 mb-6 break-words">
+                Fragen / Vorschläge an den Ersteller:<br>
+                <a href="mailto:heiko.battermann@gmail.com" class="text-indigo-600 hover:underline">heiko.battermann@gmail.com</a>
+            </p>
+            <button id="close-overlay-btn" class="btn btn-primary">Schließen</button>
+        </div>
+    </div>
+    
+    <script>
+        // Registrierung des Service Workers
+        // Überprüft, ob der Browser Service Worker unterstützt
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                // Den geänderten Namen des Service Workers verwenden
+                navigator.serviceWorker.register('/schwingenschlag-service-worker.js').then(registration => {
+                    console.log('Service Worker registriert mit Geltungsbereich:', registration.scope);
+                }).catch(err => {
+                    console.log('Service Worker Registrierung fehlgeschlagen:', err);
+                });
+            });
+        }
+
+        // Array to hold player names
+        let playerNames = [];
+        const maxPlayers = 5;
+
+        // Score categories with structured display parts
+        const scoreCategories = [
+            { text: "Marker auf Drachengilde", display: [{ type: "text", content: "Marker auf Drachengilde" }] },
+            { text: "Werte der Drachen", display: [{ type: "image", src: "img/Leer.png", alt: "Leer" }, { type: "text", content: " Werte der Drachen" }] },
+            { 
+                text: "Punkte durch Endspiel-Fähigkeiten", 
+                display: [
+                    { type: "image", src: "img/Leer.png", alt: "Leer" },
+                    { type: "text", content: " Punkte durch " },
+                    { type: "image", src: "img/Flagge.png", alt: "Flagge" },
+                    { type: "text", content: " -Fähigkeiten" }
+                ]
+            },
+            { text: "1 pro Ei", display: [{ type: "image", src: "img/Voll.png", alt: "Voll" }, { type: "text", content: " 1 pro Ei" }] },
+            { text: "1 pro gehorteter Ressource", display: [{ type: "image", src: "img/Voll.png", alt: "Voll" }, { type: "text", content: " 1 pro gehorteter Ressource" }] },
+            { text: "1 pro untergeschobener Karte", display: [{ type: "image", src: "img/Voll.png", alt: "Voll" }, { type: "text", content: " 1 pro untergeschobener Karte" }] },
+            { text: "Punkte durch öffentliche Ziele", display: [{ type: "image", src: "img/Leer.png", alt: "Leer" }, { type: "text", content: " Punkte durch öffentliche Ziele" }] },
+            { 
+                text: "1 pro 4 übrigen Gegenständen", // Main text for data-category attribute
+                display: [
+                    { type: "image", src: "img/Leer.png", alt: "Leer" },
+                    { type: "text", content: " durch übrige Münzen & Objekte" },
+                    { type: "list_item", content: [
+                        { type: "image", src: "img/Voll.png", alt: "Voll", class: "small-image" },
+                        { type: "text", content: " pro Münze)" }
+                    ]},
+                    { type: "list_item", content: [
+                        { type: "image", src: "img/Voll.png", alt: "Voll", class: "small-image" },
+                        { type: "text", content: " für je 4&nbsp;&nbsp;" }, // Zwei &nbsp; für zwei Leerzeichen
+                        { type: "image", src: "img/Symbole.png", alt: "Symbole", class: "small-image" },
+                        { type: "text", content: "(bel. Kombination) (abgerundet)", class: "list-item-wrapped-line" } // Text in eigener Zeile mit Einzug
+                    ]}
+                ]
+            }
+        ];
+
+        // Get DOM elements
+        const playerInputSection = document.getElementById('player-input-section');
+        const scoreTableSection = document.getElementById('score-table-section');
+        const playerNamesContainer = document.getElementById('player-names-container');
+        const addPlayerBtn = document.getElementById('add-player-btn');
+        const startScoringBtn = document.getElementById('start-scoring-btn');
+        const tableHeaderRow = document.getElementById('table-header-row');
+        const tableBody = document.getElementById('table-body');
+        const resetBtn = document.getElementById('reset-btn');
+
+        // Elements for the email overlay
+        const copyrightTrigger = document.getElementById('copyright-trigger');
+        const emailOverlay = document.getElementById('email-overlay');
+        const closeOverlayBtn = document.getElementById('close-overlay-btn');
+
+
+        /**
+         * Adds a new player input field to the player names container.
+         * Limits the number of players to maxPlayers.
+         */
+        function addPlayerInput() {
+            if (playerNames.length < maxPlayers) {
+                const playerIndex = playerNames.length;
+                playerNames.push(''); // Add a placeholder for the new player
+
+                const div = document.createElement('div');
+                div.className = 'player-name-input-group';
+                div.setAttribute('data-player-index', playerIndex);
+
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.placeholder = `Spieler ${playerIndex + 1} Name`;
+                input.className = 'player-name-input';
+                input.addEventListener('input', (e) => {
+                    playerNames[playerIndex] = e.target.value;
+                });
+
+                const removeBtn = document.createElement('button');
+                removeBtn.textContent = 'Entfernen';
+                removeBtn.className = 'btn btn-secondary text-sm px-3 py-2';
+                removeBtn.onclick = () => removePlayerInput(playerIndex);
+
+                div.appendChild(input);
+                div.appendChild(removeBtn);
+                playerNamesContainer.appendChild(div);
+
+                // Disable add player button if max players reached
+                if (playerNames.length >= maxPlayers) {
+                    addPlayerBtn.disabled = true;
+                    addPlayerBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                }
+            }
+        }
+
+        /**
+         * Removes a player input field and updates the playerNames array.
+         * @param {number} indexToRemove - The index of the player to remove.
+         */
+        function removePlayerInput(indexToRemove) {
+            // Remove the player from the array
+            playerNames.splice(indexToRemove, 1);
+
+            // Clear and re-render all player input fields to update indices
+            playerNamesContainer.innerHTML = '';
+            const tempPlayerNames = [...playerNames]; // Copy current names
+            playerNames = []; // Reset to rebuild
+            tempPlayerNames.forEach(name => {
+                addPlayerInput();
+                // Set the name back to the input field
+                const inputs = playerNamesContainer.querySelectorAll('.player-name-input');
+                if (inputs[playerNames.length - 1]) {
+                    inputs[playerNames.length - 1].value = name;
+                    playerNames[playerNames.length - 1] = name; // Update the actual playerNames array
+                }
+            });
+
+            // Enable add player button if less than max players
+            if (playerNames.length < maxPlayers) {
+                addPlayerBtn.disabled = false;
+                addPlayerBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+            // If no players left, add one default input
+            if (playerNames.length === 0) {
+                addPlayerInput();
+            }
+        }
+
+        /**
+         * Helper function to render display parts (text, image, list items).
+         * @param {HTMLElement} parentElement - The element to append content to.
+         * @param {Array} parts - Array of display part objects.
+         * @param {string} [imageClass='category-image'] - CSS class for images.
+         */
+        function renderDisplayParts(parentElement, parts, imageClass = 'category-image') {
+            parts.forEach(part => {
+                if (part.type === "image") {
+                    const img = document.createElement('img');
+                    img.src = part.src;
+                    img.alt = part.alt;
+                    img.className = part.class || imageClass; // Use specific class if provided, else default
+                    parentElement.appendChild(img);
+                } else if (part.type === "text") {
+                    // When creating a text node, HTML entities like &nbsp; are correctly parsed.
+                    const textContent = part.content;
+                    
+                    if (part.class) {
+                        const span = document.createElement('span');
+                        span.className = part.class;
+                        // Use innerHTML for span to parse &nbsp; correctly
+                        span.innerHTML = textContent; 
+                        parentElement.appendChild(span);
+                    } else {
+                        // For plain text, createTextNode is fine, but for &nbsp; innerHTML is safer
+                        const tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = textContent;
+                        while(tempDiv.firstChild) {
+                            parentElement.appendChild(tempDiv.firstChild);
+                        }
+                    }
+                } else if (part.type === "break") {
+                    parentElement.appendChild(document.createElement('br')); // Using <br> for simple line break
+                } else if (part.type === "list_item") {
+                    const listItemDiv = document.createElement('div');
+                    listItemDiv.className = 'category-list-item';
+                    
+                    const bulletIcon = document.createElement('span');
+                    bulletIcon.className = 'bullet-icon';
+                    bulletIcon.textContent = '•'; // Add bullet content
+                    listItemDiv.appendChild(bulletIcon);
+
+                    const listItemContentDiv = document.createElement('div');
+                    listItemContentDiv.className = 'list-item-content';
+                    renderDisplayParts(listItemContentDiv, part.content, 'small-image'); // Recursive call for list item content
+                    listItemDiv.appendChild(listItemContentDiv);
+
+                    parentElement.appendChild(listItemDiv);
+                }
+            });
+        }
+
+        /**
+         * Generates the score table based on the entered player names.
+         */
+        function generateScoreTable() {
+            // Filter out empty player names
+            const activePlayerNames = playerNames.filter(name => name.trim() !== '');
+
+            if (activePlayerNames.length === 0) {
+                // Use a custom modal in a real app instead of alert
+                alert('Bitte gib mindestens einen Spielernamen ein.');
+                return;
+            }
+
+            // Clear previous table content
+            tableHeaderRow.innerHTML = '<th class="rounded-tl-lg">Kategorie</th>';
+            tableBody.innerHTML = '';
+
+            // Add player names to table header
+            activePlayerNames.forEach((name, index) => {
+                const th = document.createElement('th');
+                th.textContent = name || `Spieler ${index + 1}`; // Fallback if name is empty
+                if (index === activePlayerNames.length - 1) {
+                    th.classList.add('rounded-tr-lg');
+                }
+                tableHeaderRow.appendChild(th);
+            });
+
+            // Add score categories rows
+            scoreCategories.forEach(category => {
+                const tr = document.createElement('tr');
+                const categoryTd = document.createElement('td');
+                
+                // Use the new renderDisplayParts helper
+                renderDisplayParts(categoryTd, category.display);
+
+                tr.appendChild(categoryTd);
+
+                activePlayerNames.forEach((_, playerIndex) => {
+                    const td = document.createElement('td');
+                    const input = document.createElement('input');
+                    input.type = 'number';
+                    input.value = ''; // Default value is empty, not 0
+                    input.min = 0; // Prevent negative scores
+                    input.className = 'score-input w-full text-center';
+                    input.setAttribute('data-category', category.text); // Use main text for data-category
+                    input.setAttribute('data-player-index', playerIndex);
+                    input.addEventListener('input', calculateTotals);
+                    td.appendChild(input);
+                    tr.appendChild(td);
+                });
+                tableBody.appendChild(tr);
+            });
+
+            // Add total row
+            const totalTr = document.createElement('tr');
+            totalTr.id = 'total-row';
+            totalTr.className = 'total-row';
+
+            const totalCategoryTd = document.createElement('td');
+            totalCategoryTd.textContent = 'Gesamt';
+            totalTr.appendChild(totalCategoryTd);
+
+            activePlayerNames.forEach((_, playerIndex) => {
+                const totalTd = document.createElement('td');
+                totalTd.id = `total-player-${playerIndex}`;
+                totalTd.textContent = '0';
+                totalTr.appendChild(totalTd);
+            });
+            tableBody.appendChild(totalTr);
+
+            // Show score table and hide player input section
+            playerInputSection.classList.add('hidden');
+            scoreTableSection.classList.remove('hidden');
+
+            // Initial calculation of totals
+            calculateTotals();
+        }
+
+        /**
+         * Calculates and updates the total scores for each player.
+         */
+        function calculateTotals() {
+            const activePlayerNames = playerNames.filter(name => name.trim() !== '');
+            const playerTotals = new Array(activePlayerNames.length).fill(0);
+
+            // Iterate over all score input fields
+            document.querySelectorAll('.score-input').forEach(input => {
+                const playerIndex = parseInt(input.getAttribute('data-player-index'));
+                const score = parseInt(input.value) || 0; // Parse as integer, default to 0 if invalid
+
+                if (!isNaN(score) && playerIndex < playerTotals.length) {
+                    playerTotals[playerIndex] += score;
+                }
+            });
+
+            // Update the total cells in the table
+            playerTotals.forEach((total, index) => {
+                const totalCell = document.getElementById(`total-player-${index}`);
+                if (totalCell) {
+                    totalCell.textContent = total;
+                }
+            });
+        }
+
+        /**
+         * Resets the app to the initial player name input state.
+         */
+        function resetApp() {
+            playerNames = [];
+            playerNamesContainer.innerHTML = '';
+            addPlayerInput(); // Add one default player input
+            scoreTableSection.classList.add('hidden');
+            playerInputSection.classList.remove('hidden');
+            addPlayerBtn.disabled = false;
+            addPlayerBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+
+        // Event Listeners
+        addPlayerBtn.addEventListener('click', addPlayerInput);
+        startScoringBtn.addEventListener('click', generateScoreTable);
+        resetBtn.addEventListener('click', resetApp);
+
+        // Event listeners for the email overlay
+        copyrightTrigger.addEventListener('click', () => {
+            emailOverlay.classList.remove('hidden');
+        });
+
+        closeOverlayBtn.addEventListener('click', () => {
+            emailOverlay.classList.add('hidden');
+        });
+
+        // Close overlay if clicked outside the content box
+        emailOverlay.addEventListener('click', (event) => {
+            if (event.target === emailOverlay) {
+                emailOverlay.classList.add('hidden');
+            }
+        });
+
+        // Initialize with one player input field
+        document.addEventListener('DOMContentLoaded', () => {
+            addPlayerInput();
+        });
+    </script>
+</body>
+</html>
