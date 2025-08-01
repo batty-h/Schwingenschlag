@@ -1,0 +1,14 @@
+{
+    "ios": {
+        "release": {
+            "buildFlag": [
+                "IPHONEOS_DEPLOYMENT_TARGET=15.0"
+            ]
+        },
+        "debug": {
+            "buildFlag": [
+                "IPHONEOS_DEPLOYMENT_TARGET=15.0"
+            ]
+        }
+    }
+}

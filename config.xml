@@ -10,8 +10,8 @@
     
     <platform name="ios">
         <!-- Festlegung der minimalen iOS-Version, die der Build unterstützt. -->
-        <!-- "13.0" ist eine moderne, weit verbreitete Version, die von der GitHub Actions Build-Umgebung unterstützt wird. -->
-        <preference name="DeploymentTarget" value="13.0" />
+        <!-- "15.0" ist eine moderne, weit verbreitete Version, die von der GitHub Actions Build-Umgebung unterstützt wird. -->
+        <preference name="DeploymentTarget" value="15.0" />
         
         <!-- Erforderliche Intents für iOS, um Links zum App Store zu öffnen. -->
         <allow-intent href="itms:*" />
