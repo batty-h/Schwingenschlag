@@ -2,7 +2,6 @@
 name: Cordova iOS Build
 
 # Wann soll der Workflow ausgelöst werden?
-# In diesem Fall bei jedem Push in den "main" Branch.
 on:
   push:
     branches:
@@ -14,10 +13,8 @@ on:
 # Definition der Jobs, die ausgeführt werden sollen
 jobs:
   build:
-    # Der Job läuft auf einer virtuellen macOS-Maschine
     runs-on: macos-latest
 
-    # Definition der Schritte des Jobs
     steps:
     - name: Checkout Code
       # Holt den Code aus dem Repository
@@ -27,7 +24,7 @@ jobs:
       # Richtet Node.js ein, was für Cordova benötigt wird
       uses: actions/setup-node@v4
       with:
-        node-version: '18' # Oder eine andere Version, die du verwendest
+        node-version: '18'
 
     - name: Install Cordova CLI
       # Installiert die Cordova-Befehlszeilen-Tools global
@@ -37,15 +34,17 @@ jobs:
       # Installiert die Abhängigkeiten deines Projekts
       run: npm install
 
+    - name: Add Cordova iOS Platform
+      # DIES IST DER NEUE, WICHTIGE SCHRITT.
+      # Dieser Befehl fügt die iOS-Plattform zu dem Projekt auf dem virtuellen Mac-Computer hinzu.
+      run: cordova platform add ios --no-fetch
+      
     - name: Cordova iOS Build
-      # Führt den Cordova-Build-Befehl für die iOS-Plattform aus.
-      # Der Build-Pfad hängt davon ab, ob für den Simulator oder das Gerät gebaut wird.
-      # Hier wird ein Simulator-Build durchgeführt, der keine Codesignierung benötigt.
+      # Führt den Cordova-Build-Befehl für die iOS-Plattform aus
       run: cordova build ios --emulator --release
       
     - name: Upload iOS App as Artifact
-      # Dieser Schritt lädt die App-Datei als Artefakt hoch.
-      # Der Pfad zeigt auf das Verzeichnis, in dem der Build die .app-Datei ablegt.
+      # Lädt die App-Datei als Artefakt hoch
       uses: actions/upload-artifact@v4
       with:
         name: ios-app-build
