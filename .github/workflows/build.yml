@@ -26,26 +26,31 @@ jobs:
       with:
         node-version: '18'
 
-    - name: Install Cordova CLI
-      # Installiert die Cordova-Befehlszeilen-Tools global
-      run: npm install -g cordova
+    - name: Install Cordova CLI and cordova-res
+      # Installiert die Cordova-Befehlszeilen-Tools und cordova-res global
+      run: npm install -g cordova cordova-res
 
     - name: Install Dependencies
       # Installiert die Abhängigkeiten deines Projekts
       run: npm install
 
     - name: Clean iOS Platform
-      # DIESER NEUE SCHRITT LÖSCHT DEN VORHANDENEN IOS-PLATFORM-ORDNER
-      # Dies behebt oft Probleme mit korrupten oder veralteten Build-Dateien
+      # Dieser Schritt entfernt den vorhandenen iOS-Plattform-Ordner
       run: |
         if [ -d "platforms/ios" ]; then
           cordova platform remove ios
         fi
       
     - name: Add Cordova iOS Platform
-      # FÜGT DIE IOS-PLATTFORM WIEDER HINZU
+      # Fügt die iOS-Plattform wieder hinzu
       run: cordova platform add ios --no-fetch
       
+    - name: Generate and Copy Icons/Splashscreens
+      # Führt cordova-res aus, um die Ressourcen zu generieren.
+      # '--skip-config' verhindert, dass das Tool die config.xml ändert.
+      # '--copy' kopiert die generierten Dateien direkt in den Plattformordner.
+      run: cordova-res ios --skip-config --copy
+
     - name: Cordova iOS Build
       # Führt den Cordova-Build-Befehl für die iOS-Plattform aus
       run: cordova build ios --emulator --release
