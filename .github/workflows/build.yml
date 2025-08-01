@@ -35,7 +35,7 @@ jobs:
       run: npm install
 
     - name: Clean iOS Platform
-      # Dieser Schritt entfernt den vorhandenen iOS-Plattform-Ordner
+      # Entfernt den vorhandenen iOS-Plattform-Ordner für einen sauberen Start
       run: |
         if [ -d "platforms/ios" ]; then
           cordova platform remove ios
@@ -47,9 +47,8 @@ jobs:
       
     - name: Generate and Copy Icons/Splashscreens
       # Führt cordova-res aus, um die Ressourcen zu generieren.
-      # '--skip-config' verhindert, dass das Tool die config.xml ändert.
-      # '--copy' kopiert die generierten Dateien direkt in den Plattformordner.
-      run: cordova-res ios --skip-config --copy
+      # Da die config.xml jetzt korrekt konfiguriert ist, sucht das Tool dort nach den Bildern.
+      run: cordova-res ios --copy
 
     - name: Cordova iOS Build
       # Führt den Cordova-Build-Befehl für die iOS-Plattform aus

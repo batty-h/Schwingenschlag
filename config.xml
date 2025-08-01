@@ -16,5 +16,10 @@
         <!-- Erforderliche Intents für iOS, um Links zum App Store zu öffnen. -->
         <allow-intent href="itms:*" />
         <allow-intent href="itms-apps:*" />
-    </platform>
+
+        <!-- Icon-Quellbild für iOS -->
+       <icon src="resources/icon.png" />
+    
+        <!-- Splash-Screen-Quellbild für iOS -->
+       <splash src="resources/splash.png" />
 </widget>

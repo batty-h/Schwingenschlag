@@ -1,0 +1,11 @@
+Die PWA auf dem iPhone installieren:
+
+Öffne die App auf deinem iPhone (entweder über das Cordova-Projekt oder indem du sie auf einem Webserver bereitstellst).
+
+Tippe auf den Teilen-Button (das Quadrat mit dem nach oben zeigenden Pfeil).
+
+Scrolle nach unten und wähle "Zum Home-Bildschirm".
+
+Du kannst den Namen der App bearbeiten. Tippe dann auf "Hinzufügen".
+
+Deine App wird nun mit den von dir definierten Icon und Namen auf dem Home-Bildschirm erscheinen. Wenn du die App von dort aus startest, wird sie im Vollbildmodus ohne Browser-UI laufen und dank des Service Workers auch offline funktionieren.
