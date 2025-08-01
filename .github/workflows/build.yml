@@ -52,28 +52,10 @@ jobs:
     - name: Cordova iOS Build
       # Führt den Cordova-Build-Befehl für die iOS-Plattform aus
       run: cordova build ios --emulator --release
-
-    - name: Upload iOS App as Artifact
+      
+    - name: Upload iOS App Artifact
       # Lädt die App-Datei als Artefakt hoch, indem der korrekte, spezifische Pfad verwendet wird.
-      run: |
-        if [ -d "platforms/ios/build/Release-iphonesimulator" ]; then
-          echo "Found build directory. Uploading artifact."
-          artifact_path="platforms/ios/build/Release-iphonesimulator/Schwingenschlag-Punkte.app"
-          if [ -f "$artifact_path" ]; then
-             echo "Found app file. Uploading..."
-             # Use the correct action to upload the artifact.
-             # Note: This is a placeholder for the actual upload-artifact action.
-             # The next step should be the actual upload-artifact action.
-          else
-             echo "App file not found at $artifact_path. Listing directory contents for debugging:"
-             ls -R platforms/ios/build/Release-iphonesimulator/
-          fi
-        else
-          echo "Build directory 'platforms/ios/build/Release-iphonesimulator' not found. This indicates a previous build failure."
-        fi
-      # Der eigentliche Upload-Schritt, korrigiert
-      - name: Upload iOS App Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ios-app-build
-          path: platforms/ios/build/Release-iphonesimulator/Schwingenschlag-Punkte.app
+      uses: actions/upload-artifact@v4
+      with:
+        name: ios-app-build
+        path: platforms/ios/build/Release-iphonesimulator/Schwingenschlag-Punkte.app
