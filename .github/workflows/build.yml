@@ -47,7 +47,6 @@ jobs:
       
     - name: Generate and Copy Icons/Splashscreens
       # Führt cordova-res aus, um die Ressourcen zu generieren.
-      # Da die config.xml jetzt korrekt konfiguriert ist, sucht das Tool dort nach den Bildern.
       run: cordova-res ios --copy
 
     - name: Cordova iOS Build
@@ -55,8 +54,8 @@ jobs:
       run: cordova build ios --emulator --release
       
     - name: Upload iOS App as Artifact
-      # Lädt die App-Datei als Artefakt hoch
+      # Lädt die App-Datei als Artefakt hoch, indem der Pfad dynamisch gesucht wird
       uses: actions/upload-artifact@v4
       with:
         name: ios-app-build
-        path: platforms/ios/build/emulator
+        path: platforms/ios/build/emulator/**/*.app
