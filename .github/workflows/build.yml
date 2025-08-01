@@ -1,0 +1,51 @@
+# Name des Workflows
+name: Cordova iOS Build
+
+# Wann soll der Workflow ausgelöst werden?
+# In diesem Fall bei jedem Push in den "main" Branch.
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+# Definition der Jobs, die ausgeführt werden sollen
+jobs:
+  build:
+    # Der Job läuft auf einer virtuellen macOS-Maschine
+    runs-on: macos-latest
+
+    # Definition der Schritte des Jobs
+    steps:
+    - name: Checkout Code
+      # Holt den Code aus dem Repository
+      uses: actions/checkout@v4
+
+    - name: Install Node.js
+      # Richtet Node.js ein, was für Cordova benötigt wird
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18' # Oder eine andere Version, die du verwendest
+
+    - name: Install Cordova CLI
+      # Installiert die Cordova-Befehlszeilen-Tools global
+      run: npm install -g cordova
+
+    - name: Install Dependencies
+      # Installiert die Abhängigkeiten deines Projekts
+      # Dieser Schritt ist oft nicht nötig, da Cordova das selbst übernimmt,
+      # aber es schadet nicht, ihn zu haben, falls du weitere Abhängigkeiten hast.
+      run: npm install
+
+    - name: Cordova iOS Build
+      # Führt den Cordova-Build-Befehl für die iOS-Plattform aus
+      # Dies wird eine .xcworkspace oder .xcodeproj Datei im platforms/ios Ordner erzeugen.
+      run: cordova build ios --release
+      
+    # Anmerkung: Um eine signierte .ipa-Datei für TestFlight oder den App Store zu erstellen,
+    # sind weitere Schritte erforderlich, um Apple Developer-Zertifikate und
+    # Provisioning-Profile zu importieren. Dies erfordert die sichere Speicherung
+    # dieser Dateien als GitHub Secrets.
+    # Für einen einfachen Test-Build ist dies nicht notwendig.
