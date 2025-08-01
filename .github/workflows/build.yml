@@ -52,7 +52,7 @@ jobs:
     - name: Cordova iOS Build
       # Führt den Cordova-Build-Befehl für die iOS-Plattform aus
       run: cordova build ios --emulator --release
-      
+
     - name: Upload iOS App as Artifact
       # Lädt die App-Datei als Artefakt hoch, indem der korrekte, spezifische Pfad verwendet wird.
       run: |
